@@ -12,6 +12,7 @@ import com.serphacker.serposcope.models.google.GoogleSearch;
 import com.serphacker.serposcope.scraper.google.GoogleScrapSearch;
 import com.serphacker.serposcope.scraper.google.GoogleScrapResult;
 import static com.serphacker.serposcope.scraper.google.GoogleScrapResult.Status.OK;
+import static com.serphacker.serposcope.scraper.google.GoogleScrapResult.Status.ERROR_CAPTCHA_INCORRECT;
 import com.serphacker.serposcope.scraper.google.scraper.GoogleScraper;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
@@ -108,7 +109,12 @@ public class GoogleTaskRunnable implements Runnable {
 
                 if (res.status != OK) {
                     LOG.warn("scrap failed for {} because of {}", search.getKeyword(), res.status);
-                    proxy = null;
+
+                    if (res.status != ERROR_CAPTCHA_INCORRECT) {
+                        // Do not invalid the proxy when it is just an incorrect captcha
+                        proxy = null;
+                    }
+
                     continue;
                 }
 
