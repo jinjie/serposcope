@@ -238,7 +238,21 @@ public class TwoCaptchaSolver implements CaptchaSolver {
     
     @Override
     public boolean reportIncorrect(Captcha captcha) {
-        return false;
+        try (ScrapClient http = new ScrapClient()) {
+            int status = http.get(apiUrl + "/res.php?key=" + apiKey + "&action=reportbad&id=" + captcha.getId());
+
+            if (status != 200) {
+                LOG.debug("failed to reportbad", captcha);
+            }
+
+            if (http.getContentAsString() == "OK_REPORT_RECORDED") {
+                LOG.debug("reported bad", captcha);
+            }
+        } catch(Exception ex) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override

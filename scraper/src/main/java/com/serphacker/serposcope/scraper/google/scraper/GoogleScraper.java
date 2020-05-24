@@ -573,7 +573,7 @@ public class GoogleScraper {
         
         if(postCaptchaStatus == 503){
             LOG.debug("Failed to resolve captcha (incorrect response = {}) (recaptcha)", captcha.getResponse());
-//            solver.reportIncorrect(captcha);
+            solver.reportIncorrect(captcha);
         }
         
         return Status.ERROR_CAPTCHA_INCORRECT;
